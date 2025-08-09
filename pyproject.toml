@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reviewer2"
+version = "0.1.0"
+description = "Reviewer #2 — automation for persona-dialed ML paper reviews"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Sakura", email = "bili_sakura@zju.edu.cn" }]
+dependencies = [
+  "typer>=0.12.3",
+  "jsonschema>=4.22.0"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3.0",
+  "pytest-cov>=5.0.0"
+]
+
+[project.scripts]
+r2 = "src.cli.r2:main"
+
+[tool.pytest.ini_options]
+addopts = "-q"
+pythonpath = ["src"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
