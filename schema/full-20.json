@@ -36,7 +36,7 @@
     },
     "paper_title": { "type": "string", "minLength": 1 },
     "arm": { "type": "string", "enum": ["praise", "neutral", "harsh"] },
-    "model": { "type": "string", "const": "gpt-5" },
+    "model": { "type": "string", "const": "gpt-4o" },
     "decoding": {
       "type": "object",
       "additionalProperties": false,
