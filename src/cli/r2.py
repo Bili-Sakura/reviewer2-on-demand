@@ -12,6 +12,9 @@ from typing import Iterable, List, Dict, Any
 
 import typer
 
+from r2core.hashing import paper_id_from_title
+from r2core.io import append_jsonl
+
 app = typer.Typer(help="Reviewer #2 — end-to-end CLI (pilot-ready)")
 
 # ---------- utils ----------
@@ -26,9 +29,7 @@ def now_jst_iso() -> str:
     return datetime.now(tz=jst).isoformat(timespec="seconds")
 
 
-def paper_id_from_title(title: str) -> str:
-    h = hashlib.blake2s(title.lower().encode("utf-8")).hexdigest()[:8]
-    return f"ml_{h}"
+# removed local paper_id_from_title (use r2core.hashing)
 
 
 def ensure_dirs(*dirs: Path) -> None:
@@ -48,39 +49,7 @@ def read_paper_list(csv_path: Path) -> List[Dict[str, str]]:
     return rows
 
 
-def make_full20_stub(
-    paper: Dict[str, str],
-    paper_id: str,
-    arm: str,
-    run_id: str,
-) -> Dict[str, Any]:
-    return {
-        "paper_id": paper_id,
-        "paper_title": paper["paper_title"],
-        "arm": arm,
-        "model": "gpt-5",
-        "decoding": {"temperature": 0, "top_p": 1},
-        "persona_version": "A",
-        "content_scope": "FULL+FIG",
-        "review_text": "",
-        "word_count": 0,
-        "helpfulness_1to7": None,
-        "toxicity_1to7": None,
-        "harshness_1to7": None,
-        "run_id": run_id,
-        "timestamp_iso": now_jst_iso(),
-        "source_type": paper["source_type"],
-        "paper_url": paper["paper_url"],
-        "fig_mode": "VISION",
-        "judge_model": "Claude",
-        "toxicity_flag_tau5": False,
-        "notes": ""
-    }
-
-
-def append_jsonl(path: Path, obj: Dict[str, Any]) -> None:
-    with path.open("a", encoding="utf-8") as f:
-        f.write(json.dumps(obj, ensure_ascii=False) + "\n")
+# removed local append_jsonl (use r2core.io)
 
 
 # ---------- commands ----------

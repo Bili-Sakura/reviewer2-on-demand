@@ -14,7 +14,7 @@
 repo/
   ├─ README.md
   ├─ LICENSE
-  ├─ pyproject.toml           # or requirements.txt
+  ├─ requirements.txt         
   ├─ .env.example             # API key names
   ├─ config/
   │   └─ default.yaml         # knobs: concurrency, timeouts, paths, model ids, judge settings
