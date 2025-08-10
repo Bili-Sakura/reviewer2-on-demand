@@ -54,7 +54,9 @@ class MinerUClient:
         logger.info(f"Created parsing task with ID: {task_id}")
 
         # Wait for task completion
-        result = self._wait_for_task_completion(task_id)
+        result = self._wait_for_task_completion(
+            task_id, max_wait_time=kwargs.get("max_wait_time", 30)
+        )
 
         if result["state"] != "done":
             raise Exception(f"Parsing failed: {result.get('err_msg', 'Unknown error')}")
@@ -90,7 +92,11 @@ class MinerUClient:
         logger.info("File uploaded successfully")
 
         # Wait for parsing completion
-        result = self._wait_for_batch_completion(batch_id, Path(file_path).name)
+        result = self._wait_for_batch_completion(
+            batch_id,
+            Path(file_path).name,
+            max_wait_time=kwargs.get("max_wait_time", 30),
+        )
 
         if result["state"] != "done":
             raise Exception(f"Parsing failed: {result.get('err_msg', 'Unknown error')}")
@@ -103,12 +109,13 @@ class MinerUClient:
 
         return markdown_file
 
-    def _create_parsing_task(self, url: str, **kwargs) -> str:
+    def _create_parsing_task(self, paper_url: str, **kwargs) -> str:
         """Create a parsing task for a URL."""
-        url = f"{self.base_url}/extract/task"
+        endpoint = f"{self.base_url}/extract/task"
 
         data = {
-            "url": url,
+            # The URL of the paper to be parsed (must be the original input URL)
+            "url": paper_url,
             "is_ocr": kwargs.get("is_ocr", True),
             "enable_formula": kwargs.get("enable_formula", True),
             "enable_table": kwargs.get("enable_table", True),
@@ -116,7 +123,7 @@ class MinerUClient:
             "model_version": kwargs.get("model_version", "v2"),
         }
 
-        response = requests.post(url, headers=self.headers, json=data)
+        response = requests.post(endpoint, headers=self.headers, json=data)
         response.raise_for_status()
 
         result = response.json()
@@ -163,7 +170,7 @@ class MinerUClient:
             response.raise_for_status()
 
     def _wait_for_task_completion(
-        self, task_id: str, max_wait_time: int = 3600
+        self, task_id: str, max_wait_time: int = 30
     ) -> Dict[str, Any]:
         """Wait for a single task to complete."""
         start_time = time.time()
@@ -192,7 +199,7 @@ class MinerUClient:
         )
 
     def _wait_for_batch_completion(
-        self, batch_id: str, file_name: str, max_wait_time: int = 3600
+        self, batch_id: str, file_name: str, max_wait_time: int = 30
     ) -> Dict[str, Any]:
         """Wait for a batch task to complete."""
         start_time = time.time()

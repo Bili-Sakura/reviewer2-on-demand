@@ -1,6 +1,9 @@
-# OpenRouter LLM Client
+# LLM Clients (OpenRouter & DashScope)
 
-This module provides a Python client for interacting with LLM models through [OpenRouter.ai](https://openrouter.ai/) using the `openai` package.
+This module provides Python clients for interacting with LLM models through:
+
+- [OpenRouter.ai](https://openrouter.ai/) using the OpenAI-compatible SDK
+- [Aliyun DashScope (Qwen)](https://dashscope.aliyuncs.com/) via the OpenAI-compatible endpoint
 
 ## Features
 
@@ -17,14 +20,15 @@ This module provides a Python client for interacting with LLM models through [Op
 pip install -r requirements.txt
 ```
 
-2. Set your OpenRouter API key as an environment variable:
+2. Set your API keys as environment variables:
 ```bash
-export OPENROUTER_API_KEY="your-api-key-here"
+export OPENROUTER_API_KEY="your-openrouter-api-key"
+export DASHSCOPE_API_KEY="your-dashscope-api-key"
 ```
 
 ## Quick Start
 
-### Basic Usage
+### Basic Usage (OpenRouter)
 
 ```python
 from src.llms import create_client_from_env
@@ -44,7 +48,7 @@ else:
     print(f"Error: {result['error']}")
 ```
 
-### Custom Configuration
+### Custom Configuration (OpenRouter)
 
 ```python
 from src.llms import OpenRouterClient, OpenRouterConfig
@@ -59,6 +63,39 @@ config = OpenRouterConfig(
 client = OpenRouterClient(config)
 ```
 
+### Basic Usage (DashScope / Qwen)
+
+```python
+from src.llms import create_dashscope_client_from_env
+
+client = create_dashscope_client_from_env()
+messages = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "你是谁？"},
+]
+
+result = client.chat_completion(messages, model="qwen-plus")
+if result["success"]:
+    print(result["content"])  # 模型返回内容
+else:
+    print(f"Error: {result['error']}")
+```
+
+### Custom Configuration (DashScope)
+
+```python
+from src.llms import DashScopeClient, DashScopeConfig
+
+config = DashScopeConfig(
+    api_key="your-dashscope-api-key",
+    default_model="qwen-plus",
+    temperature=0.7,
+    max_tokens=1000,
+)
+
+client = DashScopeClient(config)
+```
+
 ## Available Models
 
 OpenRouter provides access to various LLM models including:
@@ -68,6 +105,12 @@ OpenRouter provides access to various LLM models including:
 - **Google**: Gemini Pro, Gemini Flash
 - **Meta**: Llama 3.1, Code Llama
 - **Mistral**: Mistral 7B, Mixtral 8x7B
+
+DashScope (Qwen) supports OpenAI-compatible models including:
+
+- qwen-plus, qwen-turbo, qwen-max, qwen-long, qwen-math-plus / turbo, qwen-coder-plus / turbo, and the Qwen open-source series (e.g., qwen3-32b, qwen2.5-14b-instruct, etc.)
+
+Refer to Aliyun documentation for the up-to-date list.
 
 ## API Methods
 
@@ -114,10 +157,10 @@ Get detailed information about a specific model.
 
 ## Configuration
 
-The `OpenRouterConfig` class allows you to customize:
+The `OpenRouterConfig` and `DashScopeConfig` classes allow you to customize:
 
-- `api_key`: Your OpenRouter API key (required)
-- `base_url`: API base URL (defaults to OpenRouter API)
+- `api_key`: Your provider API key (required)
+- `base_url`: API base URL (defaults to provider endpoint)
 - `default_model`: Default model to use for completions
 - `max_tokens`: Default maximum tokens for completions
 - `temperature`: Default temperature for completions

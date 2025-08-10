@@ -32,7 +32,7 @@ pip install -r requirements.txt
 ```bash
 # .env file
 MINERU_API_KEY=your_mineru_api_key_here
-OPENROUTER_API_KEY=your_openrouter_api_key_here
+DASHSCOPE_API_KEY=your_dashscope_api_key_here
 ```
 
 ## Quick Start
@@ -95,7 +95,7 @@ config = PaperReviewConfig(
         enable_table=True
     ),
     llm=LLMConfig(
-        model_name="openrouter/anthropic/claude-3.5-sonnet",
+        model_name="qwen-plus",
         temperature=0.1,
         max_tokens=4000
     ),

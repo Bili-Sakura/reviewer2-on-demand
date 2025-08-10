@@ -18,39 +18,22 @@ class MinerUConfig:
     language: str = "auto"
     model_version: str = "v2"
     output_dir: str = "./parsed_papers"
-    max_wait_time: int = 3600
+    max_wait_time: int = 30
 
 
 @dataclass
 class LLMConfig:
     """Configuration for LLM reviewer."""
 
-    model_name: str = "openrouter/anthropic/claude-3.5-sonnet"
+    model_name: str = "qwen-plus"
     api_key: Optional[str] = None
     temperature: float = 0.1
     max_tokens: int = 4000
     system_prompt: str = field(
-        default_factory=lambda: """You are an expert reviewer for top-tier machine learning conferences (ICML, NeurIPS, ICLR, ICML, AAAI). 
-    
-Your task is to evaluate research papers and provide:
-1. Overall assessment (Accept/Reject/Revision)
-2. Confidence score (1-10)
-3. Detailed reasoning
-4. Strengths and weaknesses
-5. Specific recommendations for improvement
-
-Be thorough, fair, and constructive in your evaluation."""
+        default_factory=lambda: """You are an expert reviewer for top-tier machine learning conferences. Read the paper and output only a single integer score from 1 to 10 reflecting acceptance readiness for a top-tier conference. 1 = far below bar, 5 = borderline/uncertain, 10 = award-level. Output only the integer with no other text."""
     )
 
-    review_criteria: List[str] = field(
-        default_factory=lambda: [
-            "Novelty and contribution",
-            "Technical soundness",
-            "Experimental evaluation",
-            "Clarity and presentation",
-            "Relevance to ML community",
-        ]
-    )
+    review_criteria: List[str] = field(default_factory=lambda: [])
 
 
 @dataclass
@@ -98,4 +81,5 @@ class PaperReviewConfig:
         if self.llm.api_key:
             import os
 
-            os.environ["OPENROUTER_API_KEY"] = self.llm.api_key
+            # Set DashScope key for Qwen
+            os.environ["DASHSCOPE_API_KEY"] = self.llm.api_key
